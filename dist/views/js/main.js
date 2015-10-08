@@ -608,7 +608,7 @@ document.addEventListener("DOMContentLoaded", function() {
   // element is uncessary.
   var movingPizzas = document.querySelector("#movingPizzas1");
 
-  // We don't need 200 pizzas, here we'll just calculate how many we can fit in the
+  // We don't need 200 pizzas, here w'll just calculate how many we can fit in the
   // viewport currently.
   var numRows = Math.ceil(window.innerHeight / s);
   var numCols = Math.ceil(window.innerWidth / s);
