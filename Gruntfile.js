@@ -15,7 +15,8 @@ module.exports = function(grunt) {
                 collapseWhitespace: true
           },
           files: {
-            'dist/index.html': 'dist/index.html'
+            'dist/index.html': 'dist/index.html',
+            'dist/views/pizza.html': 'views/pizza.html'
           }
         }
     };
@@ -26,7 +27,8 @@ module.exports = function(grunt) {
             files: {
                 'dist/js/loadfont.js': 'js/loadfont.js',
                 'dist/js/perfmatters.js': 'js/perfmatters.js',
-                'dist/js/sendanalytics.js': 'js/sendanalytics.js'
+                'dist/js/sendanalytics.js': 'js/sendanalytics.js',
+                'dist/views/js/main.js': 'views/js/main.js'
             }
         }
     };
@@ -42,7 +44,7 @@ module.exports = function(grunt) {
                 },
                 {
                     expand: true,
-                    src: ['views/**'],
+                    src: ['views/images/**'],
                     dest: 'dist/'
                 },
                 {
@@ -60,6 +62,12 @@ module.exports = function(grunt) {
                 {
                     expand: true,
                     src: ['css/*.css'],
+                    dest: 'dist/',
+                    ext: '.css'
+                },
+                {
+                    expand: true,
+                    src: ['views/css/*.css'],
                     dest: 'dist/',
                     ext: '.css'
                 }
@@ -85,11 +93,14 @@ module.exports = function(grunt) {
         }
     };
 
+    // Allow custom ports!
+    var port = grunt.option('port') || 8081;
+
     // Web server for development
     config.connect = {
         server: {
             options: {
-                port: 8081,
+                port: port,
                 base: 'dist',
                 keepalive: true
             }
@@ -110,5 +121,6 @@ module.exports = function(grunt) {
 
     // Register the tasks for the grunt fule
     grunt.registerTask('default', []);
-    grunt.registerTask('dist', ['clean:dist', 'inline:dist', 'htmlmin:dist', 'uglify:dist', 'copy:dist', 'cssmin:dist', 'connect']);
+    grunt.registerTask('dist-only', ['clean:dist', 'inline:dist', 'htmlmin:dist', 'uglify:dist', 'copy:dist', 'cssmin:dist']);
+    grunt.registerTask('dist', ['dist-only', 'connect']);
 };

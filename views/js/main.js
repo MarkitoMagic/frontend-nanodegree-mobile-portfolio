@@ -142,17 +142,9 @@ pizzaIngredients.crusts = [
   "Stuffed Crust"
 ];
 
-
 // This variable will hold the pizzas size DOM element and then it can be reused
 // in the application once it has been cached.
 var pizzaSize;
-
-
-// This optimization will only require that we get the current window width from a variable
-// so that this value is "cached" until the window is actually resized again. But we can
-// throttle this calculation in a animation frame so that the app isn't performing layout calculations
-// needlessly
-var currentWindowWidth = document.querySelector("#randomPizzas").offsetWidth;
 
 // Name generator pulled from http://saturdaykid.com/usernames/generator.html
 // Capitalizes first letter of each word
@@ -437,11 +429,11 @@ var resizePizzas = function(size) {
         console.log("bug in changeSliderLabel");
     }
   }
+
+  // Here we'll save the reference for the pizzaSize DOM element and cache
+  // it for later use. Because of this change, we'll not need to query the
+  // DOM for it every time the user moves the slider
   if (!pizzaSize) {
-      /* Here we'll save the reference for the pizzaSize DOM element and cache
-         it for later use. Because of this change, we'll not need to query the
-         DOM for it every time the user moves the slider
-      */
       pizzaSize = document.querySelector("#pizzaSize");
   }
   changeSliderLabel(size);
@@ -461,16 +453,8 @@ var resizePizzas = function(size) {
 
   // Iterates through pizza elements on the page and changes their widths
   function changePizzaSizes(size) {
-    /*
-      This optimization involves not repeatedly querying the DOM for information that
-      we can keep a reference to once and then use that reference. Querying the DOM can
-      be expensive. Making this change goes from 4+ times (including the querying for each
-      iteration through the for-loop) down to 1 query.
-
-      Also, since this is a simple query, we'll switch to the faster selector here. Another
-      optimization revolves around removing the uncessary pixel code and just going with percentages
-      for the size of the pizza. The effect is the
-    */
+    // Removed the DOM querying from the loop, caches the value and changed
+    // the query selector to a faster one since we have a simple query
     var pizzaContainerList = document.getElementsByClassName("randomPizzaContainer");
     var numPizzaContainerElements = pizzaContainerList.length;
 
@@ -490,9 +474,10 @@ var resizePizzas = function(size) {
 
 window.performance.mark("mark_start_generating"); // collect timing data
 
-// This for-loop actually creates and appends all of the pizzas when the page loads
+// This for-loop actually creates and appends all of the pizzas when the page loads.
+// As an optimization step, we've moved the quering for the pizzas out of the loop.
+var pizzasDiv = document.getElementById("randomPizzas");
 for (var i = 2; i < 100; i++) {
-  var pizzasDiv = document.getElementById("randomPizzas");
   pizzasDiv.appendChild(pizzaElementGenerator(i));
 }
 
@@ -536,10 +521,10 @@ function updatePositions() {
     phases.push(Math.sin((lastY / 1250) + j));
   }
 
-  // Remove the costly calculations from the loop: Math.sin, then also move
+  // Remove the costly calculations from the loop: Math.sin, then also
   // remove the layout thrashing combo of checking the layout and then updating
   // the style. Now we've moved the layout check (document.body.scrollTop) and
-  // now used the the transform/translate3d to move the element which allows us
+  // used the the transform/translate3d to move the element which allows us
   // to enlist some help from the GPU.
   for (var k = 0; k < pizzas.length; k++) {
     distance = 100 * phases[k % 5];
@@ -580,25 +565,6 @@ function requestFrame() {
 // or not (OPT)
 var isInFrame = false;
 var lastY = 0;
-
-// run the calculation only on resize so that we can keep up to date with the current windowwidth
-// used for calculating the size of the pizzas during the change
-window.addEventListener("resize", requestResizeUpdate, false);
-
-// Boolean flag here to help determine if we are calculating offsetWidth in an animation
-// frame or not.
-var isProcessResize = false;
-
-function requestResizeUpdate() {
-    if (!isProcessResize) {
-        window.requestAnimationFrame(function() {
-            requestFrame();
-            currentWindowWidth = document.querySelector("#randomPizzas").offsetWidth;
-            isProcessResize = false;
-        });
-        isProcessResize = true;
-    }
-}
 
 // Generates the sliding pizzas when the page loads.
 document.addEventListener("DOMContentLoaded", function() {

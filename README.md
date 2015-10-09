@@ -1,73 +1,158 @@
-## Website Performance Optimization portfolio project
+## Table Of Contents
 
-Your challenge, if you wish to accept it (and we sure hope you will), is to optimize this online portfolio for speed! In particular, optimize the critical rendering path and make this page render as quickly as possible by applying the techniques you've picked up in the [Critical Rendering Path course](https://www.udacity.com/course/ud884).
+- [Overview](#overview)
+- [Getting Started w/ Grunt](#getting-started-w-grunt)
+- [Getting Started w/ Python SimpleHTTPServer](#getting-started-w-python-simplehttpserver)
+- [Optimizations for Cam's Pizzeria](#optimizations-for-cams-pizzeria)
 
-To get started, check out the repository, inspect the code,
+### Overview
+The project challenged students to take on two tasks:
 
-### Getting started
+1. Optimize the __portfolio page__ (index.html) to receive a Google Page Speed Insights Score of 90 (or more) for __web__ _and_ __mobile__.
+1. Optimize the __Cam's Pizzeria__ page (views/pizza.html) to run at __60FPS__ or more.
 
-####Part 1: Optimize PageSpeed Insights score for index.html
+This was a very intriguing project because it caused me to spend a lot of time learning about performant practices in JavaScript. If interested, please do check out some of the following resources:
 
-Some useful tips to help you get started:
+- [Critical Rendering Path Course at Udacity](https://www.udacity.com/course/ud884)
+- [Google's Web Fundamentals - Optimizing Performance](https://developers.google.com/web/fundamentals/performance/index?hl=en)
 
-1. Check out the repository
-1. To inspect the site on your phone, you can run a local server
+### Getting Started w/ Grunt
+This project uses [__Grunt__](http://gruntjs.com/) as a build system. Before running any of the build process, please [install Grunt first](http://gruntjs.com/getting-started). If you haven't, you'll need to [install NodeJs](https://nodejs.org/en/) first. Follow these steps if you want a full walk through of the process for building the project.
 
-  ```bash
-  $> cd /path/to/your-project-folder
-  $> python -m SimpleHTTPServer 8080
-  ```
+1. Check out this repository
+1. Navigate to the downloaded repository and download the dependencies
+```bash
+$> cd /path/to/frontend-nanodegree-mobile-portfolio/
+$> npm install
+```
 
-1. Open a browser and visit localhost:8080
-1. Download and install [ngrok](https://ngrok.com/) to make your local server accessible remotely.
+1. Build the project and start the server
+```bash
+$> grunt dist
+```
+This will build the project __and__ start a webserver availble at port 8081. Here's what you'll see from on the terminal:
+```bash
+Running "connect:server" (connect) task
+Waiting forever...
+Started connect web server on http://localhost:8081
+```
+This confirms, what the port will be for the server. Don't like this port? Want to use another? No problem!
+```bash
+$> grunt dist --port=your-port-here
+```
+The output of the build process is found in the ```dist``` directory.
+1.  Open a browser and visit ```http://localhost:8081``` to get started
 
-  ``` bash
-  $> cd /path/to/your-project-folder
-  $> ngrok 8080
-  ```
+### Getting Started w/ Python SimpleHTTPServer
+If you have ```python``` installed on your machine, you can boot this project very quickly as follows:
 
-1. Copy the public URL ngrok gives you and try running it through PageSpeed Insights! Optional: [More on integrating ngrok, Grunt and PageSpeed.](http://www.jamescryer.com/2014/06/12/grunt-pagespeed-and-ngrok-locally-testing/)
+1. Download the repository
+1. Start the webserver
+```bash
+$> cd /path/to/frontend-nanodegree-mobile-portfolio/dist
+$> python -m SimpleHTTPServer 8000
+```
+1. Open a browser and visit ```http:localhost: 8000``` to get started
 
-Profile, optimize, measure... and then lather, rinse, and repeat. Good luck!
+### Optimizations for Cam's Pizzeria Scrolling
+#### Pizza Generation
+In the event listener for ```DOMContentLoaded```, the code was updated to no longer arbitrarily create 200 pizzas for the background. That would result in 1 DOM node per pizza. To optimize this, the dimensions of the viewport are calculated and a grid of 6x6 pizzas is created. This way we aren't creating pizzas for space that won't even get rendered.
 
-####Part 2: Optimize Frames per Second in pizza.html
+```js
+var numRows = Math.ceil(window.innerHeight / s);
+var numCols = Math.ceil(window.innerWidth / s);
 
-To optimize views/pizza.html, you will need to modify views/js/main.js until your frames per second rate is 60 fps or higher. You will find instructive comments in main.js. 
+// Use this nested loop to create rows of pizzas
+// and create pizzas for the UI
+for (var i =0; i < numRows; i++) {
+  for (var j = 0; j < numCols; j++) {
+    createPizza(i, j);
+  }
+}
+```
 
-You might find the FPS Counter/HUD Display useful in Chrome developer tools described here: [Chrome Dev Tools tips-and-tricks](https://developer.chrome.com/devtools/docs/tips-and-tricks).
+The ```createPizza``` function helps with readability but not with any specific optimizations there. Another small change here is that at the end of this callback, we request update the positions of the pizzas during an animation frame provided by the browser.
 
-### Optimization Tips and Tricks
-* [Optimizing Performance](https://developers.google.com/web/fundamentals/performance/ "web performance")
-* [Analyzing the Critical Rendering Path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/analyzing-crp.html "analyzing crp")
-* [Optimizing the Critical Rendering Path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/optimizing-critical-rendering-path.html "optimize the crp!")
-* [Avoiding Rendering Blocking CSS](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-blocking-css.html "render blocking css")
-* [Optimizing JavaScript](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/adding-interactivity-with-javascript.html "javascript")
-* [Measuring with Navigation Timing](https://developers.google.com/web/fundamentals/performance/critical-rendering-path/measure-crp.html "nav timing api"). We didn't cover the Navigation Timing API in the first two lessons but it's an incredibly useful tool for automated page profiling. I highly recommend reading.
-* <a href="https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/eliminate-downloads.html">The fewer the downloads, the better</a>
-* <a href="https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/optimize-encoding-and-transfer.html">Reduce the size of text</a>
-* <a href="https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/image-optimization.html">Optimize images</a>
-* <a href="https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/http-caching.html">HTTP caching</a>
+#### Scrolling Animation
+The scrolling animation iterates through the background pizzas and then based on a formula (sinusoidal phases) moves the pizzas laterally. This function had lots of changes to get the animation to be smooth and less costly.
 
-### Customization with Bootstrap
-The portfolio was built on Twitter's <a href="http://getbootstrap.com/">Bootstrap</a> framework. All custom styles are in `dist/css/portfolio.css` in the portfolio repo.
+##### Debouncing the scroll events
+The first step was to not have the ```updatePositions``` function be called on ever event generated by the scroll listener. To accomplish this, the event listener calls a function to request an animation frame. If the frame is currently in the middle of processing the last call to ```updatePositions``` the additional call isn't made. Here's the code for that:
 
-* <a href="http://getbootstrap.com/css/">Bootstrap's CSS Classes</a>
-* <a href="http://getbootstrap.com/components/">Bootstrap's Components</a>
+```js
+// We register the event listener
+window.addEventListener("scroll", requestFrame, false);
 
-### Sample Portfolios
+// When called, we only request an animationFrame IF we aren't in the middle of working on the last request
+function requestFrame() {
+    if (!isInFrame) {
+        window.requestAnimationFrame(updatePositions);
+        isInFrame = true;
+        lastY =  window.scrollY;
+    }
+}
+```
+Now, we don't bombard the ```updatePositions``` function and we get a somewhat smoother experience. But we can do better.
 
-Feeling uninspired by the portfolio? Here's a list of cool portfolios I found after a few minutes of Googling.
+#### Caching and re-using values
+In the ```updatePositions``` function this are a few values that once were calculated on ever execution that won't change (or not likely to change) between executions. We make some changes to cache those values where appropriate:
+```js
+function updatePositions() {
+  var distance;
+  var phases = [];
 
-* <a href="http://www.reddit.com/r/webdev/comments/280qkr/would_anybody_like_to_post_their_portfolio_site/">A great discussion about portfolios on reddit</a>
-* <a href="http://ianlunn.co.uk/">http://ianlunn.co.uk/</a>
-* <a href="http://www.adhamdannaway.com/portfolio">http://www.adhamdannaway.com/portfolio</a>
-* <a href="http://www.timboelaars.nl/">http://www.timboelaars.nl/</a>
-* <a href="http://futoryan.prosite.com/">http://futoryan.prosite.com/</a>
-* <a href="http://playonpixels.prosite.com/21591/projects">http://playonpixels.prosite.com/21591/projects</a>
-* <a href="http://colintrenter.prosite.com/">http://colintrenter.prosite.com/</a>
-* <a href="http://calebmorris.prosite.com/">http://calebmorris.prosite.com/</a>
-* <a href="http://www.cullywright.com/">http://www.cullywright.com/</a>
-* <a href="http://yourjustlucky.com/">http://yourjustlucky.com/</a>
-* <a href="http://nicoledominguez.com/portfolio/">http://nicoledominguez.com/portfolio/</a>
-* <a href="http://www.roxannecook.com/">http://www.roxannecook.com/</a>
-* <a href="http://www.84colors.com/portfolio.html">http://www.84colors.com/portfolio.html</a>
+  ...
+
+  var pizzas = document.getElementsByClassName("mover");
+
+  // Cache the phases, they only change based on the scroll distance
+  for (var j = 0; j < 5; j++) {
+    phases.push(Math.sin((lastY / 1250) + j));
+  }
+  ...
+}
+```
+As can be see above in the line the phases are cached __before__ the values are used in an positioning lines of code. Remember ```lastY``` from the ```requestFrame``` function? Here's where we use it verses making calls to ```document.body.scrollTop``` and asking the browser to do layout related calculations. This actually saves us a layout step in the time line. But, as before, we can do better.
+
+#### Transforms and Hinting
+Updating the CSSOM from JavaScript is going to have a performance impact but we can make some changes to the way the pizzas are animated. The original code performed the moves via:
+
+```js
+var items = document.querySelectorAll('.mover');
+for (var i = 0; i < items.length; i++) {
+  ...
+  items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
+                 ^^^^
+}
+```
+This isn't wrong, but in a step to optimize we can use hardware accelerated 3d transforms and moving the pizzas to their own layers. One of the impacts this change has on the pipeline is that it transforms only invoke composite events ((learn more) [http://csstriggers.com/]). Another step was to hint to the browser that we'll be doing transformations. This may encourage the browser to do some optimizations by creating individual layers for the dom elements that are hinted to be adjusted this way. In the pizza creation we do it like this:
+
+```js
+var elem = document.createElement("img");
+...
+elem.style.willChange = "transform";
+elem.style.transform = "translateZ(0)";
+...
+movingPizzas.appendChild(elem);
+```
+
+With the combined effort of caching layout calculating calls and 3d transforms, we're able to optimize the scroll animation to run as smooth as butter!
+
+### Optimizations for Cam's Pizzeria Resize Pizzas
+The optimizations for making the pizza resizing were smaller but are still worth taking the time to explore.
+
+#### Removing Pixel Calculation
+The original ```resizePizzas``` had a function named ```determineDx``` to help figure out what the new pixel size would be. It queried the the DOM for widths of elements which, as we've seen, can trigger layout calculations. The change here was to remove the function altogether and simple use the percentages returned from ```sizeSwitcher``` to get the new size.
+
+```js
+function changePizzaSizes(size) {
+  ...
+  for (var i = 0; i < numPizzaContainerElements; i++) {
+    pizzaContainerList[i].style.width = (sizeSwitcher(size) * 100) + "%";
+  }
+}
+```
+There is still an update to the CSS but we can live with that. One optimization I considered here would have been to use Scale and not width.
+
+#### Anything else?
+Throughout the application there are small changes to things like which query selector is used and removing DOM querying from for loops wherever it made sense. Thanks for taking the time to read this this ```README``` - stay awesome!
