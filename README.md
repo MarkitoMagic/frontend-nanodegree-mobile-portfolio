@@ -52,6 +52,7 @@ If you have ```python``` installed on your machine, you can boot this project ve
   $> cd /path/to/frontend-nanodegree-mobile-portfolio/dist
   $> python -m SimpleHTTPServer 8000
   ```
+
 4. Open a browser and visit ```http:localhost: 8000``` to get started
 
 ### Optimizations for Cam's Pizzeria Scrolling
