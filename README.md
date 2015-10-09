@@ -21,15 +21,15 @@ This project uses [__Grunt__](http://gruntjs.com/) as a build system. Before run
 
 1. Check out this repository
 2. Navigate to the downloaded repository and download the dependencies
-```bash
-$> cd /path/to/frontend-nanodegree-mobile-portfolio/
-$> npm install
-```
+  ```bash
+  $> cd /path/to/frontend-nanodegree-mobile-portfolio/
+  $> npm install
+  ```
 
 3. Build the project and start the server
-```bash
-$> grunt dist
-```
+  ```bash
+  $> grunt dist
+  ```
 This will build the project __and__ start a webserver availble at port 8081. Here's what you'll see from on the terminal:
 ```bash
 Running "connect:server" (connect) task
@@ -48,10 +48,10 @@ If you have ```python``` installed on your machine, you can boot this project ve
 
 1. Download the repository
 2. Start the webserver
-```bash
-$> cd /path/to/frontend-nanodegree-mobile-portfolio/dist
-$> python -m SimpleHTTPServer 8000
-```
+  ```bash
+  $> cd /path/to/frontend-nanodegree-mobile-portfolio/dist
+  $> python -m SimpleHTTPServer 8000
+  ```
 3. Open a browser and visit ```http:localhost: 8000``` to get started
 
 ### Optimizations for Cam's Pizzeria Scrolling
