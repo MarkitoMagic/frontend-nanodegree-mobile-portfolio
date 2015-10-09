@@ -47,12 +47,12 @@ The output of the build process is found in the ```dist``` directory.
 If you have ```python``` installed on your machine, you can boot this project very quickly as follows:
 
 1. Download the repository
-2. Start the webserver
+2. Navigate to the downloaded repository and run a local server
   ```bash
   $> cd /path/to/frontend-nanodegree-mobile-portfolio/dist
   $> python -m SimpleHTTPServer 8000
   ```
-3. Open a browser and visit ```http:localhost: 8000``` to get started
+4. Open a browser and visit ```http:localhost: 8000``` to get started
 
 ### Optimizations for Cam's Pizzeria Scrolling
 #### Pizza Generation
