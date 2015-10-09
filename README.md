@@ -3,7 +3,8 @@
 - [Overview](#overview)
 - [Getting Started w/ Grunt](#getting-started-w-grunt)
 - [Getting Started w/ Python SimpleHTTPServer](#getting-started-w-python-simplehttpserver)
-- [Optimizations for Cam's Pizzeria](#optimizations-for-cams-pizzeria)
+- [Optimizations for Cam's Pizzeria Scrolling](#optimizations-for-cams-pizzeria-scrolling)
+- [Optimizations for Cam's Pizzeria Resize Pizzas](#optimizations-for-cams-pizzeria-resize-pizzas)
 
 ### Overview
 The project challenged students to take on two tasks:
